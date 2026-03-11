@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<title>AI Speech Sentiment Analyzer</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI;
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+background:#111827;
+padding:40px;
+border-radius:15px;
+width:650px;
+box-shadow:0 0 25px rgba(0,0,0,0.7);
+}
+
+h1{
+text-align:center;
+color:#00c6ff;
+margin-bottom:25px;
+}
+
+.upload-box{
+text-align:center;
+margin-top:10px;
+}
+
+input[type=file]{
+padding:10px;
+background:#1f2937;
+border:none;
+border-radius:6px;
+color:white;
+}
+
+button{
+background:#00c6ff;
+border:none;
+padding:12px 25px;
+border-radius:8px;
+cursor:pointer;
+color:white;
+font-size:15px;
+font-weight:bold;
+margin-top:10px;
+}
+
+button:hover{
+background:#0096c7;
+}
+
+.status{
+text-align:center;
+margin-top:15px;
+color:#00e5ff;
+font-weight:bold;
+}
+
+.result-box{
+margin-top:30px;
+background:#1f2937;
+padding:20px;
+border-radius:10px;
+}
+
+.result-box h3{
+color:#00c6ff;
+}
+
+#transcription{
+background:#0f172a;
+padding:12px;
+border-radius:8px;
+margin-top:8px;
+}
+
+#sentiment{
+background:#0f172a;
+padding:12px;
+border-radius:8px;
+margin-top:8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>AI Speech Sentiment Analyzer</h1>
+
+<div class="upload-box">
+
+<input type="file" id="audioFile" accept=".wav,.mp3,.ogg">
+
+<br>
+
+<button onclick="uploadAudio()">Transcribe & Analyze</button>
+
+</div>
+
+<div class="status" id="status"></div>
+
+<div class="result-box">
+
+<h3>Transcribed Text</h3>
+<p id="transcription">Waiting for audio...</p>
+
+<h3>Sentiment</h3>
+<p id="sentiment">Waiting for analysis...</p>
+
+</div>
+
+</div>
+
+<script>
+
+function uploadAudio(){
+
+let file = document.getElementById("audioFile").files[0]
+
+if(!file){
+alert("Please select audio file")
+return
+}
+
+document.getElementById("status").innerText="Processing audio..."
+
+let formData = new FormData()
+formData.append("audio",file)
+
+fetch("/analyze",{
+
+method:"POST",
+body:formData
+
+})
+.then(res=>res.json())
+.then(data=>{
+
+document.getElementById("status").innerText="Analysis Completed"
+
+document.getElementById("transcription").innerText=data.transcription
+
+document.getElementById("sentiment").innerText=
+data.sentiment+" (Confidence "+data.confidence+")"
+
+})
+.catch(err=>{
+
+document.getElementById("status").innerText="Error processing audio"
+
+})
+
+}
+
+</script>
+
+</body>
+</html>
